@@ -24,9 +24,9 @@ def generate_documents(img_path, model):
     # return decoded_text
     # return response.text
 
-def generate_questions(img_path, num_of_questions, model):
+def generate_questions(img_path, num_of_qa, model):
     image = Image.open(img_path)
-    response = model.generate_content([f"Tạo {num_of_questions} cặp câu hỏi và trả lời về nội dung trong hình sau bằng tiếng Việt", image])
+    response = model.generate_content([f"Tạo {num_of_qa} cặp câu hỏi và trả lời về nội dung trong hình sau bằng tiếng Việt", image])
     if hasattr(response, 'text'):
         return response.text
     else:
