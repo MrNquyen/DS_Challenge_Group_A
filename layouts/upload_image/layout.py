@@ -13,7 +13,7 @@ from utils import st_upload_image, st_upload_pdf, st_upload_video_link
 from utils import load_json, save_json, preprocess_text
 
 from functions.upload_image.function import A_save_upload_file
-from functions.retrieval import generate_documents
+from functions.retrieval import generate_caption, generate_documents
 
 INPUT_CONFIG = configImageInput()
 
