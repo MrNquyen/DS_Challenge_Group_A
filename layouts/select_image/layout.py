@@ -116,11 +116,7 @@ def image_layout(image_name):
                 use_container_width=True,
             ):
                 switch_layout('doc_content', img_path, 'img')
-    
 
-    # st.write(col2_layout)
-
-    # st.write(list_rois)
     if st.button('Back to Selection Images', use_container_width=True):
         switch_layout(target_content='selection_layout')
 

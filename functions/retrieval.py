@@ -13,9 +13,13 @@ def generate_caption(img_path, model):
     else:
         return str(response)
 
-def generate_documents(img_path, model):
+def generate_documents(
+        img_path, 
+        model, 
+        prompt='Giải thích thêm thông tin về hình ảnh sau bằng tiếng Việt trong 10 đoạn văn, mỗi đoạn có độ dài từ 5-7 câu',
+    ):
     image = Image.open(img_path)
-    response = model.generate_content(["Giải thích thêm thông tin về hình ảnh sau bằng tiếng Việt với độ dài 5-7 câu", image])
+    response = model.generate_content([prompt, image])
     # Check if the response has a text attribute and return it
     if hasattr(response, 'text'):
         return response.text
@@ -26,11 +30,32 @@ def generate_documents(img_path, model):
 
 def generate_questions(img_path, num_of_qa, model):
     image = Image.open(img_path)
-    response = model.generate_content([f"Tạo {num_of_qa} cặp câu hỏi và trả lời về nội dung trong hình sau bằng tiếng Việt", image])
+
+    prompt = f"Tạo {num_of_qa} cặp câu hỏi và trả lời về nội dung trong hình sau bằng tiếng Việt."
+
+    response = model.generate_content([prompt, image])
+    
     if hasattr(response, 'text'):
-        return response.text
+        text = response.text.strip()
+        if not text:
+            return [], []
+
+        questions = []
+        answers = []
+
+        # Get QA lists
+        text = text.split('\n')
+        while('' in text):
+            text.remove('')
+        text = text[1:]
+
+        # Get questions, answers
+        questions = [text[i] for i in range(len(text)) if i % 2 == 0]
+        answers = [text[i] for i in range(len(text)) if i % 2 != 0]
+            
+        return questions, answers, response.text
     else:
-        return str(response)
+        return [], [], ''
 
 def load_model(model_name='gemini-1.5-flash'):
     if 'generate_docs_model' not in st.session_state:

@@ -226,17 +226,26 @@ def show_img(path):
     image = Image.open(path)
     st.image(image)
 
+# Insert Number
+def insert_number(title='Insert a number'):
+    # Set the minimum value to 2 to restrict input greater than 1
+    number = st.number_input(
+        title, 
+        value=2, 
+        min_value=2
+    )
+    
+    # Return the absolute, rounded integer value
+    number = abs(int(round(number)))
+    return number
+
 # preprocessing text
 def preprocess_text(text):
     # Step 1: Remove markdown symbols (** for bold, \n for newlines)
     text = text.replace('*', '')
     text = text.replace('#', '')
-    # text = text.replace('\n', ' ')  # Replace newline characters with space
     
     # Step 2: Normalize multiple spaces to a single space
-    text = re.sub(r'\s+', ' ', text).strip()  # Replace multiple spaces with a single space and strip leading/trailing spaces
-    
-    # Step 4: Optional: Remove special characters (keeping only alphanumerics and basic punctuation)
-    # text = re.sub(r'[^a-zA-Z0-9\s.,]', '', text)
+    text = re.sub(' +', ' ', text).strip()  # Replace multiple spaces with a single space and strip leading/trailing spaces
     
     return text

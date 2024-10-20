@@ -11,6 +11,8 @@ from functions.crop_image import YOLOModel
 from utils import getFileName, listROI, sanitize_file_name
 from utils import removeDuplicate
 
+from functions.retrieval import generate_caption, generate_questions
+
 # Function 1.1: check upload image
 def U_checkUploadImage(upload_file,
                        upload_tab,
@@ -31,13 +33,6 @@ def U_checkUploadImage(upload_file,
         img_path = f'{str(img_save_dir)}/{img_name}.png'
         cv2.imwrite(filename=img_path,
                     img=image)
-        
-        # # Create a json file for image
-        # img_dict = {}
-        # with open(f'{img_save_dir}/{img_name}.json', 'w') as f:
-        #     json.dump(img_dict, f, indent=6, ensure_ascii=False)
-
-        st.write(img_save_dir)
 
         # Append to st.session_state.upload_img_name
         st.session_state.upload_img_name.append(img_name)

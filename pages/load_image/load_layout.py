@@ -10,7 +10,7 @@ import cv2
 from PIL import Image
 from utils import configImageInput, load_PARA, listROI, getFileName, load_json
 
-from layouts.upload_image.layout import upload_tab_layout, add_tab_layout, documents_tab_layout
+from layouts.upload_image.layout import upload_tab_layout, add_tab_layout, documents_tab_layout, QA_layout
 
 from functions.upload_image.function import U_checkUploadImage, U_showImage 
 from functions.upload_image.function import detachROI
@@ -21,17 +21,17 @@ def load_layout_setup(PARA):
     layout_dict = {}
     ### Create a title for the web
     st.title('Wonderful Infographic')
-    upload_tab, add_tab, documents_tab, save_tab = st.tabs([
+    upload_tab, add_tab, documents_tab, qa_tab = st.tabs([
         'Upload', 
         'Add', 
         'Related Documents', 
-        'Save'
+        'QA'
     ])
 
     layout_dict['upload_tab'] = upload_tab
     layout_dict['add_tab'] = add_tab
     layout_dict['documents_tab'] = documents_tab
-    layout_dict['save_tab'] = save_tab
+    layout_dict['qa_tab'] = qa_tab
 
     return layout_dict
 
@@ -43,7 +43,7 @@ def load_show_layout(PARA):
     upload_tab = layout_dict['upload_tab']
     add_tab = layout_dict['add_tab']
     documents_tab = layout_dict['documents_tab']
-    save_tab = layout_dict['save_tab']
+    qa_tab = layout_dict['qa_tab']
 
     ### Setup Upload layput
     upload_tab_layout(PARA=PARA,
@@ -71,7 +71,6 @@ def load_show_layout(PARA):
         img_dir = f'{PARA['SAVE_DIR']}/{filename}'
         json_name = f'{filename}.json'
         if json_name not in os.listdir(img_dir):
-            st.write(f'Detach ROI')
             detachROI(PARA, upload_file)
 
     ## Setup add layout
@@ -88,6 +87,16 @@ def load_show_layout(PARA):
             upload_file=upload_file,
             PARA=PARA,
             documents_tab=documents_tab
+        )
+
+    ## QA Layout
+    if upload_file is not None:
+        filename = getFileName(upload_file.name)
+        img_path = f'{PARA['SAVE_DIR']}/{filename}/{filename}.png'
+        QA_layout(
+            PARA=PARA,
+            streamlit_col=qa_tab,
+            img_path=img_path,
         )
     
         

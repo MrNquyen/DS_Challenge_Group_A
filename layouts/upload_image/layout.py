@@ -10,10 +10,10 @@ from streamlit_image_coordinates import streamlit_image_coordinates as im_coordi
 
 from utils import configImageInput, listROI, getFileName
 from utils import st_upload_image, st_upload_pdf, st_upload_video_link
-from utils import load_json, save_json, preprocess_text
+from utils import load_json, save_json, preprocess_text, show_img, insert_number
 
 from functions.upload_image.function import A_save_upload_file
-from functions.retrieval import generate_caption, generate_documents
+from functions.retrieval import generate_documents, generate_caption, generate_questions
 
 INPUT_CONFIG = configImageInput()
 
@@ -250,9 +250,80 @@ def documents_tab_layout(
         )
 
 
-# Show presentation tab
-# def save_tab_layout(PARA,
-#                     save_tab):
-#     col1, col2 = save_tab.columns(2)
+# QA tab
+def QA_layout(
+        PARA,
+        streamlit_col,
+        img_path,
+    ):
+    '''
+        Show the question and the answer of the question
+    '''
+    model = st.session_state.generate_docs_model
+    # Image Block
+    image_container = streamlit_col.container(border=True)
+    with image_container:
+        show_img(img_path)
 
-    # Col1 = Save button
+    # Caption Container
+    streamlit_col.subheader(
+        'Caption for Infographic',
+        divider="gray",
+    )
+    caption_container = streamlit_col.container(border=True)
+    
+    ## Load and save caption
+    img_name = getFileName(img_path.split('/')[-1])
+    json_path = f'{PARA['SAVE_DIR']}/{img_name}/{img_name}.json'
+    with open(json_path, 'r', encoding='utf-8') as f:
+        img_json = json.load(f)
+    if 'caption' not in img_json:
+        caption = generate_caption(img_path, model)
+
+        # Ensure the generated text is valid and encoded properly
+        if isinstance(caption, str):
+            img_json['caption'] = preprocess_text(caption)
+        else:
+            img_json['caption'] = preprocess_text(str(caption))
+        # Dump json
+        with open(f"{PARA['SAVE_DIR']}/{img_name}/{img_name}.json", 'w', encoding='utf-8') as f:
+            json.dump(img_json, f, ensure_ascii=False, indent=5)  # Corrected arguments
+
+    else:
+        caption = img_json['caption']
+    ## Write caption
+    with caption_container:
+        st.write(caption)
+    
+    # QA block
+    streamlit_col.subheader(
+        'QAs for Infographic',
+        divider="gray",
+    )
+    # Input number of question:
+    with streamlit_col:
+        print('Input Number')
+        num_qa = insert_number('Select number of questions that you want to generate !!!')
+    
+    # Show qa
+    print(num_qa)
+    list_questions, list_ans, org_text = generate_questions(
+        img_path=img_path,
+        num_of_qa=num_qa,
+        model=model,
+    )
+    
+    for i, (question, ans) in enumerate(zip(list_questions, list_ans)):
+        print('Generate')
+        question, ans = preprocess_text(question), preprocess_text(ans)
+        container = streamlit_col.container(border=True)
+        col1, col2 = container.columns(2)
+        
+        # Expander for question
+        expander_ques = col1.expander(f'Question number {i+1}')
+        ques_container =  expander_ques.container(border=True)
+        ques_container.write(question)
+
+        # Expander for answer
+        expander_ans = col2.expander(f'Answer number {i+1}')
+        expander_ans.write(ans)
