@@ -24,6 +24,14 @@ def generate_documents(img_path, model):
     # return decoded_text
     # return response.text
 
+def generate_questions(img_path, model):
+    image = Image.open(img_path)
+    response = model.generate_content(["Xuất ra 5 câu hỏi về nội dung trong hình sau bằng tiếng Việt", image])
+    if hasattr(response, 'text'):
+        return response.text
+    else:
+        return str(response)
+
 def load_model(model_name='gemini-1.5-flash'):
     if 'generate_docs_model' not in st.session_state:
         st.session_state.generate_docs_model = None
