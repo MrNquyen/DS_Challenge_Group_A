@@ -26,7 +26,7 @@ def generate_documents(img_path, model):
 
 def generate_questions(img_path, num_of_questions, model):
     image = Image.open(img_path)
-    response = model.generate_content([f"Xuất ra {num_of_questions} câu hỏi về nội dung trong hình sau bằng tiếng Việt", image])
+    response = model.generate_content([f"Tạo {num_of_questions} cặp câu hỏi và trả lời về nội dung trong hình sau bằng tiếng Việt", image])
     if hasattr(response, 'text'):
         return response.text
     else:
