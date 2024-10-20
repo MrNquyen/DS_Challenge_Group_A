@@ -15,7 +15,7 @@ def generate_caption(img_path, model):
 
 def generate_documents(img_path, model):
     image = Image.open(img_path)
-    response = model.generate_content(["Giải thích thêm thông tin về hình ảnh sau bằng tiếng Việt với độ dài 5 đoạn văn", image])
+    response = model.generate_content(["Giải thích thêm thông tin về hình ảnh sau bằng tiếng Việt với độ dài 5-7 câu", image])
     # Check if the response has a text attribute and return it
     if hasattr(response, 'text'):
         return response.text
@@ -24,9 +24,9 @@ def generate_documents(img_path, model):
     # return decoded_text
     # return response.text
 
-def generate_questions(img_path, model):
+def generate_questions(img_path, num_of_questions, model):
     image = Image.open(img_path)
-    response = model.generate_content(["Xuất ra 5 câu hỏi về nội dung trong hình sau bằng tiếng Việt", image])
+    response = model.generate_content([f"Xuất ra {num_of_questions} câu hỏi về nội dung trong hình sau bằng tiếng Việt", image])
     if hasattr(response, 'text'):
         return response.text
     else:
